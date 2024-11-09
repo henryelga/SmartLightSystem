@@ -64,9 +64,6 @@ GPIO.setup(PIR_pin, GPIO.IN)
 GPIO.setup(Buzzer_pin, GPIO.OUT)
 GPIO.setup(LED_pin, GPIO.OUT)
 
-def main():
-    motion_detection()
-
 def motion_detection():
 
     global last_motion, manual_light_on
@@ -87,6 +84,8 @@ def motion_detection():
 
         time.sleep(1)
 
+def main():
+    motion_detection()
 
 if __name__ == "__main__":
     main()
