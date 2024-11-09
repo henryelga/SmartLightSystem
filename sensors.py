@@ -56,7 +56,6 @@ def handle_message(message):
 publish_result = pubnub.publish().channel(app_channel).message('Hello from Elgas Pi').sync()
 
 PIR_pin = 23
-Buzzer_pin = 24
 LED_pin = 24
 
 GPIO.setwarnings(False)
