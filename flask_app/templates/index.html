@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sensor Dashboard</title>
+    <style>
+        .status {
+            font-size: 24px;
+            padding: 10px;
+        }
+        .on {
+            color: green;
+        }
+        .off {
+            color: red;
+        }
+    </style>
+
+    <!-- Load PubNub script first -->
+    <script src="https://cdn.pubnub.com/sdk/javascript/pubnub.4.29.11.min.js"></script>
+</head>
+<body>
+    <h1>Sensor Dashboard</h1>
+    <div id="motionStatus" class="status off">Motion: No</div>
+    <div id="ir1Status" class="status off">IR Sensor 1: Not Broken</div>
+    <div id="ir2Status" class="status off">IR Sensor 2: Not Broken</div>
+
+    <!-- Your custom JavaScript comes after the PubNub script -->
+    <script>
+        // Initialize PubNub
+        var pubnub = new PubNub({
+            subscribeKey: 'sub-c-efff5b33-2da3-4a60-b6b2-e418b270bb86',
+            publishKey: 'pub-c-39055472-ec0b-487f-b2a4-89bfe382a3d2',
+            userId: 'raspberry_pi'
+        });
+
+        // Subscribe to the PubNub channel
+        pubnub.subscribe({
+            channels: ['elgas_pi_channel'], // The channel your Raspberry Pi is publishing to
+            message: function(message) {
+                console.log('New message received:', message);
+
+                // Update the front-end based on the received message
+                if (message.Motion === 'Yes') {
+                    document.getElementById('motionStatus').textContent = 'Motion: Detected';
+                    document.getElementById('motionStatus').classList.remove('off');
+                    document.getElementById('motionStatus').classList.add('on');
+                } else if (message.Motion === 'No') {
+                    document.getElementById('motionStatus').textContent = 'Motion: No';
+                    document.getElementById('motionStatus').classList.remove('on');
+                    document.getElementById('motionStatus').classList.add('off');
+                }
+
+                if (message.IR1_Beam === 'Broken') {
+                    document.getElementById('ir1Status').textContent = 'IR Sensor 1: Broken';
+                    document.getElementById('ir1Status').classList.remove('off');
+                    document.getElementById('ir1Status').classList.add('on');
+                }
+
+                if (message.IR2_Beam === 'Broken') {
+                    document.getElementById('ir2Status').textContent = 'IR Sensor 2: Broken';
+                    document.getElementById('ir2Status').classList.remove('off');
+                    document.getElementById('ir2Status').classList.add('on');
+                }
+            }
+        });
+    </script>
+</body>
+</html>
