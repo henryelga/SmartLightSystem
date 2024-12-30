@@ -61,7 +61,7 @@ LED_pin = 24
 GPIO.setwarnings(False)
 GPIO.setmode(GPIO.BCM)
 GPIO.setup(PIR_pin, GPIO.IN)
-GPIO.setup(Buzzer_pin, GPIO.OUT)
+#GPIO.setup(Buzzer_pin, GPIO.OUT)
 GPIO.setup(LED_pin, GPIO.OUT)
 
 def motion_detection():
