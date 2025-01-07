@@ -20,10 +20,8 @@ function startListeningForUpdates() {
             // Check for motion or IR sensor data
             if (event.message.Motion !== undefined) {
                 updateMotionStatus(event.message.Motion);
-            } else if (event.message.IR1_Beam !== undefined) {
-                updateIRSensorStatus("IR1", event.message.IR1_Beam);
-            } else if (event.message.IR2_Beam !== undefined) {
-                updateIRSensorStatus("IR2", event.message.IR2_Beam);
+            } else if (event.message.Beam !== undefined) {
+                updateIRSensorStatus(event.message.Beam);
             }
         },
         status: (statusEvent) => {
@@ -53,15 +51,15 @@ function updateMotionStatus(status) {
 }
 
 // Update IR sensor status
-function updateIRSensorStatus(sensor, status) {
-    const sensorElement = document.getElementById(`${sensor}Status`);
+function updateIRSensorStatus(status) {
+    const sensorElement = document.getElementById("irStatus");
     if (sensorElement) {
         if (status === "Broken") {
-            sensorElement.textContent = `${sensor} Sensor: Broken`;
+            sensorElement.textContent = "IR Break Beam: Broken";
             sensorElement.classList.add('on');
             sensorElement.classList.remove('off');
         } else {
-            sensorElement.textContent = `${sensor} Sensor: Intact`;
+            sensorElement.textContent = "IR Break Beam: Not Broken";
             sensorElement.classList.add('off');
             sensorElement.classList.remove('on');
         }
