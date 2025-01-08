@@ -22,6 +22,8 @@ function startListeningForUpdates() {
                 updateMotionStatus(event.message.Motion);
             } else if (event.message.Beam !== undefined) {
                 updateIRSensorStatus(event.message.Beam);
+            } else if (event.message.Light !== undefined) {  
+                updateLightStatus(event.message.Light);
             }
         },
         status: (statusEvent) => {
@@ -65,6 +67,25 @@ function updateIRSensorStatus(status) {
         }
     }
 }
+
+// Update Light status
+
+// Update light status
+function updateLightStatus(status) {
+    const lightStatusElement = document.getElementById("lightStatus");
+    if (lightStatusElement) {
+        if (status === "On") {
+            lightStatusElement.textContent = "Light: On";
+            lightStatusElement.classList.add('on');
+            lightStatusElement.classList.remove('off');
+        } else {
+            lightStatusElement.textContent = "Light: Off";
+            lightStatusElement.classList.add('off');
+            lightStatusElement.classList.remove('on');
+        }
+    }
+}
+
 
 // Initialize the subscription and listening for updates
 startListeningForUpdates();
