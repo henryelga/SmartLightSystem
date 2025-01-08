@@ -6,11 +6,11 @@ from flask_dance.contrib.google import make_google_blueprint, google
 from dotenv import load_dotenv
 import pymysql
 
-# import my_db
+import my_db
 
 load_dotenv()
 
-# db = my_db.db
+db = my_db.db
 
 app = Flask(__name__)
 
@@ -38,12 +38,12 @@ def check_database_credentials(uri):
     except Exception as e:
         print("⚠️ Error while checking database credentials:", e)
 
-app.config["SQLALCHEMY_DATABASE_URI"] = 'mysql+pymysql://root:@127.0.0.1/heart_rate'
+app.config["SQLALCHEMY_DATABASE_URI"] = 'mysql+pymysql://root:@127.0.0.1/smart_light'
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 
 check_database_credentials(app.config["SQLALCHEMY_DATABASE_URI"])
 
-# db.init_app(app)
+db.init_app(app)
 
 
 
@@ -53,7 +53,7 @@ if os.getenv("OAUTHLIB_INSECURE_TRANSPORT") == "1":
 google_bp = make_google_blueprint(
     client_id=GOOGLE_CLIENT_ID,
     client_secret=GOOGLE_CLIENT_SECRET,
-    redirect_to="google_login",  # Ensure this is the correct callback function
+    redirect_to="google_login",
     scope=[
         "openid",
         "https://www.googleapis.com/auth/userinfo.profile",
@@ -70,11 +70,10 @@ def index():
     else:
         return render_template("index.html")
 
-# Google login route
 @app.route("/google_login")
 def google_login():
     if not google.authorized:
-        return redirect(url_for("login"))  # Correct the redirect to the google.login route
+        return redirect(url_for("login")) 
 
     response = google.get("https://www.googleapis.com/oauth2/v1/userinfo")
     if not response.ok:
@@ -83,11 +82,22 @@ def google_login():
 
     user_info = response.json()
     print("User Info:", user_info)
+
+    # Store user info in the session
     session["user"] = user_info.get("name", "Unknown User")
     session["email"] = user_info.get("email", "No email provided")
     session["google_client_id"] = user_info.get("id")
 
+    # Add user to the database or update login status
+    my_db.add_user_and_login(
+        name=user_info.get("name", "Unknown User"),
+        google_client_id=user_info.get("id"),
+        email=user_info.get("email", "No email provided"),
+        token=None, 
+    )
+
     return redirect(url_for("home"))
+
 
 # logout route
 @app.route("/logout")
@@ -98,7 +108,7 @@ def logout():
 
 @app.route("/not_authorized")
 def not_authorized():
-    return render_template("not_authorized.html")  # Create a corresponding HTML template
+    return render_template("not_authorized.html") 
 
 
 def login_required(f):
@@ -114,18 +124,11 @@ def login_required(f):
 def home():
     user = session.get("user", "Guest")
     email = session.get("email", "No email provided")
-    google_client_id = session.get("google_client_id", "No client_id provided")
-
-    # my_db.add_user_and_login(user, google_client_id, email)
-    
-    # user_data = my_db.get_user_by_email(email)
 
     return render_template(
         "home.html",
         user=user,
-        google_client_id=google_client_id,
         email=email,
-        # user_data=user_data,
     )
 
 if __name__ == "__main__":
