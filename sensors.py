@@ -55,11 +55,13 @@ def handle_message(message):
         if msg['lights'] == 'off':
             GPIO.output(LED_pin, False)
             manual_light_on = False
+            pubnub.publish().channel(app_channel).message({"Light": "Off"}).sync()
             print("LED turned off")
         elif msg['lights'] == 'on':
             GPIO.output(LED_pin, True)
             manual_light_on = True
             last_event_time = time.time()
+            pubnub.publish().channel(app_channel).message({"Light": "On"}).sync()
             print("LED turned on")
 
 # Motion and IR detection loop
@@ -79,6 +81,8 @@ def detection_loop():
             GPIO.output(LED_pin, True)
             pubnub.publish().channel(app_channel).message({"Motion": "Yes"}).sync()
             pubnub.publish().channel(app_channel).message({"Beam": "Broken"}).sync()
+pubnub.publish().channel(app_channel).message({"Light": "On"}).sync()
+
 
         # Only Motion Detected
         if motion_detected:
@@ -86,6 +90,8 @@ def detection_loop():
             print("Motion Detected")
             GPIO.output(LED_pin, True)
             pubnub.publish().channel(app_channel).message({"Motion": "Yes"}).sync()
+pubnub.publish().channel(app_channel).message({"Light": "On"}).sync()
+
 
         # Only Beam Broken
         if beam_broken:
@@ -93,6 +99,8 @@ def detection_loop():
             print("IR Beam Broken")
             GPIO.output(LED_pin, True)
             pubnub.publish().channel(app_channel).message({"Beam": "Broken"}).sync()
+pubnub.publish().channel(app_channel).message({"Light": "On"}).sync()
+
 
         #if not motion_detected:
          #   print("No Motion Detected")
@@ -102,12 +110,13 @@ def detection_loop():
         if not beam_broken:
             print("IR Beam Not Broken")
             pubnub.publish().channel(app_channel).message({"Beam": "Not broken"}).sync()
-		time.sleep(0.5)
+            time.sleep(0.5)
 
 
         # Turn off LED if no event happens within duration
         if not manual_light_on and time.time() - last_event_time > light_on_duration:
             GPIO.output(LED_pin, False)
+            pubnub.publish().channel(app_channel).message({"Light": "Off"}).sync()
             pubnub.publish().channel(app_channel).message({"Motion": "No"}).sync()
             pubnub.publish().channel(app_channel).message({"Beam": "Not broken"}).sync()
 
