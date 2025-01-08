@@ -14,11 +14,9 @@
 </head>
 
 <body>
-    <h1>Sensor Dashboard</h1>
-    <div id="lightStatus" class="status off">Light: Off</div>
-
-    <div id="motionStatus" class="status off">Motion: No</div>
-    <div id="irStatus" class="status off">IR Sensor: Not Broken</div>
+    <h1>Welcome! Please log in using Google.</h1>
+    <a href="{{ url_for('google.login') }}">Log in with Google</a>
+    
 
     <!-- Link to the external JavaScript file -->
     <script src="../static/js/script.js"></script>
