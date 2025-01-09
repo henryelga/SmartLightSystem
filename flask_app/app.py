@@ -178,5 +178,10 @@ def dashboard():
 
     return render_template("dashboard.html", events=events, user=user)    
 
+@app.route('/about')
+def about():
+    user = session.get("user", "Guest")
+    return render_template('about.html', user=user)
+
 if __name__ == "__main__":
     app.run(debug=True)

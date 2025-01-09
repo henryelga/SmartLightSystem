@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+
+{% block title %}About My App{% endblock %}
+
+{% block content %}
+<section class="about-section">
+    <h1>About SmartLightSystem</h1>
+    <p>
+        Welcome to SmartLightSystem! This application automates lighting controls using sensors and allows manual overrides via a web interface. 
+        It integrates features such as motion detection, beam-breaking sensors, and manual light toggles.
+    </p>
+
+    <h2>Features</h2>
+    <ul>
+        <li>Automatic light control based on motion and beam status</li>
+        <li>Manual light toggling via the web interface</li>
+        <li>Real-time event tracking and logging</li>
+    </ul>
+
+    <h2>Screenshots</h2>
+    <div class="screenshots">
+        <div class="screenshot">
+            <img src="{{ url_for('static', filename='images/login.png') }}" alt="Login">
+            <p>Easy login using Gmail</p>
+        </div>
+        <div class="screenshot">
+            <img src="{{ url_for('static', filename='images/manual_control.png') }}" alt="Manual Control Screenshot">
+            <p>Manual light control interface.</p>
+        </div>
+    </div>
+</section>
+{% endblock %}
