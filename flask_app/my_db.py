@@ -1,6 +1,6 @@
 from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
-from sqlalchemy import and_
+from datetime import timedelta
 
 db = SQLAlchemy()
 
@@ -25,6 +25,22 @@ class User(db.Model):
         self.read_access = read_access
         self.write_access = write_access
         self.email = email
+        
+# Sensor data table
+class Event(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    motion_detected = db.Column(db.Boolean)
+    beam_status = db.Column(db.String(50))
+    light_status = db.Column(db.String(50))
+    manual_control = db.Column(db.Boolean)
+    timestamp = db.Column(db.DateTime, default=datetime.utcnow)
+
+    def __init__(self, motion_detected, beam_status, light_status, manual_control):
+        self.motion_detected = motion_detected
+        self.beam_status = beam_status
+        self.light_status = light_status
+        self.manual_control = manual_control
+
 
 def get_user_row_if_exists(google_client_id):
     return User.query.filter_by(google_client_id=google_client_id).first()
@@ -74,3 +90,32 @@ def get_user_token(google_client_id):
     except Exception as e:
         print(f"Error in get_user_token: {e}")
         raise Exception(f"Error fetching user token: {e}")
+    
+
+def add_event(motion_detected, beam_status, light_status, manual_control):
+    # Get the last event from the database
+    last_event = Event.query.order_by(Event.timestamp.desc()).first()
+    time_threshold = timedelta(seconds=10)
+
+    if (last_event is None or 
+        (last_event.motion_detected != motion_detected or
+         last_event.beam_status != beam_status or
+         last_event.light_status != light_status or
+         last_event.manual_control != manual_control or
+         (datetime.utcnow() - last_event.timestamp) > time_threshold)):
+        
+        # Save the new event in the database
+        new_event = Event(
+            motion_detected=motion_detected,
+            beam_status=beam_status,
+            light_status=light_status,
+            manual_control=manual_control
+        )
+        db.session.add(new_event)
+        db.session.commit()
+
+
+
+# Get all event data from the database
+def get_all_events():
+    return Event.query.all()

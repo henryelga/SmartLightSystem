@@ -1,5 +1,5 @@
 import os
-from flask import Flask, render_template, jsonify, redirect, url_for, session, flash
+from flask import Flask, render_template, jsonify, request, redirect, url_for, session, flash
 from functools import wraps
 from flask_sqlalchemy import SQLAlchemy
 from flask_dance.contrib.google import make_google_blueprint, google
@@ -14,18 +14,18 @@ db = my_db.db
 
 app = Flask(__name__)
 
-# App Configuration
+# app Configuration
 app.secret_key = "topSecret123"
 os.environ["OAUTHLIB_INSECURE_TRANSPORT"] = "1"
 
-# Checking for default or no password
+# checking for default or no password
 def check_database_credentials(uri):
     try:
-        # Parse URI
+        # parse URI
         user = uri.split('//')[1].split(':')[0]
         password = uri.split(':')[2].split('@')[0]
         
-        # Check for default or empty password
+        # check for default or empty password
         if not password or password in ["root", "admin", "password", "", ""]:
             print("⚠️ Warning: The database is using a default or no password. Please secure your database!")
         
@@ -64,7 +64,7 @@ google_bp = make_google_blueprint(
 app.register_blueprint(google_bp, url_prefix="/login")
 
 @app.route("/")
-# Redirect to home if the user is already logged in
+# redirect to home if the user is already logged in
 def index():
     if "user" in session and session["user"] != "Guest":
         return redirect(url_for("home"))
@@ -84,12 +84,12 @@ def google_login():
     user_info = response.json()
     print("User Info:", user_info)
 
-    # Store user info in the session
+    # store user info in the session
     session["user"] = user_info.get("name", "Unknown User")
     session["email"] = user_info.get("email", "No email provided")
     session["google_client_id"] = user_info.get("id")
 
-    # Add user to the database or update login status
+    # add user to the database or update login status
     my_db.add_user_and_login(
         name=user_info.get("name", "Unknown User"),
         google_client_id=user_info.get("id"),
@@ -107,11 +107,12 @@ def logout():
     flash("You have been logged out successfully.", "info")
     return redirect(url_for("index"))
 
+# not_authorized route
 @app.route("/not_authorized")
 def not_authorized():
     return render_template("not_authorized.html") 
 
-
+# login required
 def login_required(f):
     @wraps(f)
     def decorated_function(*args, **kwargs):
@@ -131,6 +132,51 @@ def home():
         user=user,
         email=email,
     )
+    
+last_motion_detected = False 
+last_beam_status = "Not Broken"
+last_light_status = "Off"
+
+@app.route('/add_event', methods=['POST'])
+def add_event():
+    global last_motion_detected, last_beam_status, last_light_status 
+
+    # get data from the request
+    data = request.get_json()
+
+    # update motion_detected, keeping track of the last known value
+    motion_detected = data.get('motion_detected')
+    if motion_detected is not None:
+        last_motion_detected = motion_detected 
+    else:
+        motion_detected = last_motion_detected  
+
+    beam_status = data.get('beam_status')
+    if beam_status is not None:
+        last_beam_status = beam_status  
+    else:
+        beam_status = last_beam_status 
+
+    light_status = data.get('light_status')
+    if light_status is not None:
+        last_light_status = light_status
+    else:
+        light_status = last_light_status  
+
+    manual_control = data.get('manual_control') or False 
+
+    my_db.add_event(motion_detected, beam_status, light_status, manual_control)
+
+    return jsonify({"message": "Event processed successfully"}), 201
+
+@app.route("/dashboard")
+@login_required
+def dashboard():
+    # retrieve all events from the database
+    events = my_db.get_all_events()
+    user = session.get("user", "Guest")
+
+    return render_template("dashboard.html", events=events, user=user)    
 
 if __name__ == "__main__":
     app.run(debug=True)

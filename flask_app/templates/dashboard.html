@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+
+{% block title %}Sensor Dashboard{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="container" style="text-align: center;">
+        <h2 class="text-center mb-4">Event Dashboard</h2>
+    </div>
+
+    <div class="table-container">
+        <table class="table table-bordered table-hover text-center">
+            <thead class="table-dark">
+                <tr>
+                    <th>Motion Detected</th>
+                    <th>Beam Status</th>
+                    <th>Light Status</th>
+                    <th>Manual Control</th>
+                    <th>Timestamp</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for event in events|reverse %}
+                <tr>
+                    <td>{{ event.motion_detected }}</td>
+                    <td>{{ event.beam_status }}</td>
+                    <td>{{ event.light_status }}</td>
+                    <td>{{ event.manual_control }}</td>
+                    <td>{{ event.timestamp.strftime('%Y-%m-%d %H:%M:%S') }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+{% endblock %}
