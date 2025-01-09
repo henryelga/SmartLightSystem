@@ -1,19 +1,29 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Home</title>
-</head>
-<body>
-    <h1>Welcome {{ user }}!</h1>
-    <p>Email: {{ email }}</p>
-    <a href="{{ url_for('logout') }}">Logout</a>
+{% extends "base.html" %}
 
-    <h1>Sensor Dashboard</h1>
-    <div id="lightStatus" class="status off">Light: Off</div>
+{% block title %}Sensor Dashboard{% endblock %}
 
-    <div id="motionStatus" class="status off">Motion: No</div>
-    <div id="irStatus" class="status off">IR Sensor: Not Broken</div>
-</body>
-</html>
+{% block content %}
+    <div class="dashboard-container">
+        <!-- Welcome Section -->
+        <div class="welcome-section">
+            <h2>Welcome, {{ user }}!</h2>
+            <p>Email: {{ email }}</p>
+        </div>
+
+        <!-- Sensor Status Section -->
+        <div class="status-container">
+            <div class="status-item">
+                <h3>Motion Status</h3>
+                <div id="motionStatus" class="status off">Motion: No</div>
+            </div>
+            <div class="status-item">
+                <h3>IR Sensor Status</h3>
+                <div id="irStatus" class="status off">IR Sensor: Not Broken</div>
+            </div>
+            <div class="status-item">
+                <h3>Light Status</h3>
+                <div id="lightStatus" class="status off">Light: Off</div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

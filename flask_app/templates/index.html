@@ -1,25 +1,14 @@
-<!DOCTYPE html>
-<html lang="en">
+{% extends "base.html" %}
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sensor Dashboard</title>
+{% block title %}Login{% endblock %}
 
-    <!-- Link to the external CSS file -->
-    <link rel="stylesheet" href="../static/css/style.css">
-
-    <!-- Load PubNub script -->
-    <script src="https://cdn.pubnub.com/sdk/javascript/pubnub.4.29.11.min.js"></script>
-</head>
-
-<body>
-    <h1>Welcome! Please log in using Google.</h1>
-    <a href="{{ url_for('google.login') }}">Log in with Google</a>
-    
-
-    <!-- Link to the external JavaScript file -->
-    <script src="../static/js/script.js"></script>
-</body>
-
-</html>
+{% block content %}
+    <div class="login-container">
+        <h2>Welcome to SmartLightSystem</h2>
+        <p>Please log in using Google to access the dashboard.</p>
+        <a href="{{ url_for('google.login') }}" class="login-btn">
+            <div class="google-icon"></div>
+            <span class="google-text">Sign in with Google</span>
+        </a>
+    </div>
+{% endblock %}

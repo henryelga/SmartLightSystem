@@ -45,7 +45,8 @@ check_database_credentials(app.config["SQLALCHEMY_DATABASE_URI"])
 
 db.init_app(app)
 
-
+GOOGLE_CLIENT_ID = "369450398481-b8c4p4lv4h5v823tt0aq6i9m7fd2999q.apps.googleusercontent.com"
+GOOGLE_CLIENT_SECRET = "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"
 
 if os.getenv("OAUTHLIB_INSECURE_TRANSPORT") == "1":
     os.environ["OAUTHLIB_INSECURE_TRANSPORT"] = "1"
