@@ -104,7 +104,38 @@ def detection_loop():
 
         time.sleep(0.5)
 
+class Listener(SubscribeCallback):
+    def message(self, pubnub, message):
+        print(f"Received message: {message.message}")
+        handle_pubnub_message(message.message)
+
+def start_pubnub_listener():
+    listener = Listener()
+    pubnub.add_listener(listener)
+    pubnub.subscribe().channels(app_channel).execute()
+
+def handle_pubnub_message(message):
+    if message.get("event") == "light_toggle":
+        new_light_status = message.get("light_status")
+        print("New Light Status: ", new_light_status)
+
+        # Update the GPIO pin based on the new light status
+        if new_light_status == "On":
+            GPIO.output(LED_pin, GPIO.HIGH)  # Turn the light on
+            print("Light turned on.")
+        elif new_light_status == "Off":
+            GPIO.output(LED_pin, GPIO.LOW)  # Turn the light off
+            print("Light turned off.")
+
+        # Correctly publish a message
+        publish_message({"msg": f"New light status: {new_light_status}"})  # Use a dictionary with a key
+
+def publish_message(message):
+    pubnub.publish().channel(app_channel).message(message).sync()
+    print(f"Published: {message}")
+
 def main():
+    start_pubnub_listener()
     detection_loop()
 
 if __name__ == "__main__":
