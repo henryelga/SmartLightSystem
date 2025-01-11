@@ -11,6 +11,8 @@
 
     <!-- Load PubNub script -->
     <script src="https://cdn.pubnub.com/sdk/javascript/pubnub.4.29.11.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
 
     {% block head %}{% endblock %}
 </head>
@@ -27,7 +29,6 @@
                 {% if user %}
                     <li><a href="{{ url_for('home') }}">Home</a></li>
                     <li><a href="{{ url_for('dashboard') }}">Dashboard</a></li>
-                    <li><a href="{{ url_for('about') }}">About</a></li>
                     <li><a href="{{ url_for('logout') }}">Logout</a></li>
                 {% else %}
                     <li><a href="{{ url_for('about') }}">About</a></li>

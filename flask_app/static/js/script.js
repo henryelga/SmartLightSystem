@@ -1,14 +1,48 @@
 console.log("Working...");
 
+const TOKEN_TTL_SECONDS = 5 * 60;
+let tokenRefreshTimer = null;
+
 const pubnub = new PubNub({
     publishKey: 'pub-c-39055472-ec0b-487f-b2a4-89bfe382a3d2',
     subscribeKey: 'sub-c-efff5b33-2da3-4a60-b6b2-e418b270bb86',
-    uuid: "raspberry_pi",
+    uuid: window.userUUID,
+    // uuid: "raspberry_pi",
+    authKey: window.token,
 });
+
+console.log("AuthKey being used:", window.token);
+
 
 const CHANNEL_NAME = "elgas_pi_channel"; 
 
 let currentLightStatus = "Off";
+
+// --- PubNub Communication ---
+function subscribeToChannel() {
+    console.log("Subscribing to channel:", CHANNEL_NAME, "with UUID:", pubnub.getUUID());
+    pubnub.subscribe({ channels: [CHANNEL_NAME] });
+    pubnub.addListener({
+        message: handleIncomingMessage,
+        status: handlePubNubStatus,
+    });
+}
+
+function handleIncomingMessage(event) {
+    try {
+        console.log("Received encrypted message:", event.message);
+    } catch (error) {
+        console.error("Error decrypting message:", error);
+    }
+}
+
+function handlePubNubStatus(statusEvent) {
+    if (statusEvent.category === "PNConnectedCategory") {
+        console.log("Successfully connected to PubNub channel.");
+    } else {
+        console.warn("PubNub connection status:", statusEvent);
+    }
+}
 
 function startListeningForUpdates() {
     console.log("Subscribing to channel:", CHANNEL_NAME);
@@ -134,5 +168,47 @@ function sendDataToBackend(motionDetected, beamStatus, lightStatus, manualContro
     });
 }
 
-// Start listening for updates
-startListeningForUpdates();
+// --- Token Management ---
+function initializeTokenManagement() {
+    console.log("Initializing token management...");
+    scheduleTokenRefresh();
+}
+
+function refreshToken() {
+    console.log("Refreshing token...");
+    axios.post('/refresh_user_token')
+        .then(response => {
+            const data = response.data;
+            if (data.success) {
+                console.log("Token refreshed successfully:", data.token);
+
+                pubnub.setAuthKey(data.token);
+
+                scheduleTokenRefresh();
+            } else {
+                console.error("Failed to refresh token:", data.error);
+            }
+        })
+        .catch(error => {
+            console.error("Error refreshing token:", error);
+        });
+}
+
+function scheduleTokenRefresh() {
+    if (tokenRefreshTimer) {
+        clearTimeout(tokenRefreshTimer);
+    }
+
+    const refreshTime = (TOKEN_TTL_SECONDS - 10) * 1000;
+    tokenRefreshTimer = setTimeout(refreshToken, refreshTime);
+
+    console.log("Token refresh scheduled in:", refreshTime / 1000, "seconds");
+}
+
+function initApp(){
+    subscribeToChannel();
+    initializeTokenManagement();
+    startListeningForUpdates();
+}
+
+document.addEventListener("DOMContentLoaded", initApp);

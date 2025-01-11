@@ -1,6 +1,7 @@
 import RPi.GPIO as GPIO
 import time
 import os
+import uuid
 from pubnub.pnconfiguration import PNConfiguration
 from pubnub.pubnub import PubNub
 from dotenv import load_dotenv
@@ -11,12 +12,13 @@ load_dotenv()
 
 manual_light_on = False
 last_light_status = False
-last_event_time = 0  
+last_event_time = 0  # Tracks last detected event time
 
 # Configure PubNub
 config = PNConfiguration()
 config.subscribe_key = os.getenv("PUBNUB_SUBSCRIBE_KEY")
 config.publish_key = os.getenv("PUBNUB_PUBLISH_KEY")
+config.secret_key = os.getenv("PUBNUB_SECRET_KEY")
 config.user_id = "raspberry_pi"
 
 pubnub = PubNub(config)

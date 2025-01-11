@@ -3,27 +3,35 @@
 {% block title %}Sensor Home{% endblock %}
 
 {% block content %}
-    <div class="dashboard-container">
-        <!-- Welcome Section -->
-        <div class="welcome-section">
-            <h2>Welcome, {{ user }}!</h2>
-            <p>Email: {{ email }}</p>
-        </div>
+<div class="dashboard-container">
+    <!-- Welcome Section -->
+    <div class="welcome-section">
+        <h2>Welcome, {{ user }}!</h2>
+        <p>Email: {{ email }}</p>
+    </div>
 
-        <!-- Sensor Status Section -->
-        <div class="status-container">
-            <div class="status-item">
-                <h3>Motion Status</h3>
-                <div id="motionStatus" class="status off">Motion: No</div>
-            </div>
-            <div class="status-item">
-                <h3>IR Sensor Status</h3>
-                <div id="irStatus" class="status off">IR Sensor: Not Broken</div>
-            </div>
-            <div class="status-item">
-                <h3>Light Status</h3>
-                <div id="lightStatus" class="status off">Light: Off</div>
-            </div>
+    <!-- Sensor Status Section -->
+    <div class="status-container">
+        <div class="status-item">
+            <h3>Motion Status</h3>
+            <div id="motionStatus" class="status off">Motion: No</div>
+        </div>
+        <div class="status-item">
+            <h3>IR Sensor Status</h3>
+            <div id="irStatus" class="status off">IR Sensor: Not Broken</div>
+        </div>
+        <div class="status-item">
+            <h3>Light Status</h3>
+            <div id="lightStatus" class="status off">Light: Off</div>
         </div>
     </div>
+    <script>
+        window.userUUID = "{{ session['google_client_id'] }}";
+        window.token = "{{ session['token'] }}";
+
+        console.log('User UUID:', userUUID);
+        console.log('Token:', token);
+
+    </script>
+</div>
 {% endblock %}

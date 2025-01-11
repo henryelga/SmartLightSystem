@@ -6,7 +6,7 @@ from flask_dance.contrib.google import make_google_blueprint, google
 from dotenv import load_dotenv
 import pymysql
 
-import my_db
+import my_db, pb
 
 load_dotenv()
 
@@ -15,7 +15,7 @@ db = my_db.db
 app = Flask(__name__)
 
 # app Configuration
-app.secret_key = "topSecret123"
+app.secret_key = "sec-c-YTYyZmQ3YTItYzc1ZS00NjMwLTlkNGQtOTFmODM1ZTYyNzBk"
 os.environ["OAUTHLIB_INSECURE_TRANSPORT"] = "1"
 
 # checking for default or no password
@@ -96,6 +96,12 @@ def google_login():
         email=user_info.get("email", "No email provided"),
         token=None, 
     )
+    
+    token = pb.generate_token(user_info.get("id"))
+
+    if token:
+        my_db.update_user_token(user_info.get("id"), token)
+        session["token"] = token 
 
     return redirect(url_for("home"))
 
@@ -126,11 +132,20 @@ def login_required(f):
 def home():
     user = session.get("user", "Guest")
     email = session.get("email", "No email provided")
+    google_client_id = session.get("google_client_id", "No client_id provided")
+    
+    token = None
+    
+    user_record = my_db.get_user_row_if_exists(google_client_id)
+    if user_record:
+        token = user_record.token
 
     return render_template(
         "home.html",
         user=user,
         email=email,
+        google_client_id=google_client_id,
+        token=token,
     )
     
 last_motion_detected = False 
@@ -180,8 +195,28 @@ def dashboard():
 
 @app.route('/about')
 def about():
-    user = session.get("user", "Guest")
-    return render_template('about.html', user=user)
+    return render_template('about.html')
+
+@app.route("/refresh_user_token", methods=["POST"])
+def refresh_user_token():
+    try:
+        user_uuid = session.get("google_client_id")
+        if not user_uuid:
+            return jsonify({"error": "User not logged in"}), 401
+
+        new_token = pb.refresh_token(user_uuid, ttl=5)
+
+        if not new_token:
+            return jsonify({"error": "Failed to refresh token"}), 500
+
+        my_db.update_user_token(user_uuid, new_token)
+
+        session["token"] = new_token
+
+        return jsonify({"success": True, "token": new_token}), 200
+    except Exception as e:
+        print(f"Error in refresh_token_endpoint: {e}")
+        return jsonify({"error": "Internal server error"}), 500
 
 if __name__ == "__main__":
     app.run(debug=True)
