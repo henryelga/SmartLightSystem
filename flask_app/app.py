@@ -15,7 +15,7 @@ db = my_db.db
 app = Flask(__name__)
 
 # app Configuration
-app.secret_key = "sec-c-YTYyZmQ3YTItYzc1ZS00NjMwLTlkNGQtOTFmODM1ZTYyNzBk"
+app.secret_key = "secretKey"
 os.environ["OAUTHLIB_INSECURE_TRANSPORT"] = "1"
 
 # checking for default or no password

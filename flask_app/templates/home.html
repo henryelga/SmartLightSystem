@@ -22,8 +22,11 @@
         </div>
         <div class="status-item">
             <h3>Light Status</h3>
-            <div id="lightStatus" class="status off">Light: Off</div>
+            <div id="lightStatus" class="status off" onclick="toggleLight()">
+                Light: Off
+            </div>
         </div>
+        
     </div>
     <script>
         window.userUUID = "{{ session['google_client_id'] }}";

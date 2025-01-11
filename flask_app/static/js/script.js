@@ -103,6 +103,29 @@ function updateMotionStatus(status) {
     }
 }
 
+// Function to toggle the light on/off
+function toggleLight() {
+    const lightStatusElement = document.getElementById("lightStatus");
+    const newLightStatus = currentLightStatus === "Off" ? "On" : "Off";  // Toggle the status
+
+    // Update the UI
+    updateLightStatus(newLightStatus);
+
+    // Send the message to PubNub to update the light status
+    pubnub.publish({
+        channel: CHANNEL_NAME,
+        message: {
+            event: "light_toggle",
+            light_status: newLightStatus,  // Send the new light status
+        }
+    }).then((response) => {
+        console.log("Light toggle message sent to PubNub:", response);
+    }).catch((error) => {
+        console.error("Error sending light toggle message:", error);
+    });
+}
+
+
 // Update IR sensor status
 function updateIRSensorStatus(status) {
     const sensorElement = document.getElementById("irStatus");
