@@ -10,8 +10,8 @@ app_channel = "elgas_pi_channel"
 load_dotenv()
 
 manual_light_on = False
-last_event_time = 0  # Tracks last detected event time
-last_light_status = None  # Track the last light status
+last_light_status = False
+last_event_time = 0  
 
 # Configure PubNub
 config = PNConfiguration()
@@ -37,6 +37,8 @@ def detection_loop():
     global last_event_time, manual_light_on, last_light_status
 
     light_on_duration = 10  # Keep light on for 10 seconds after last event
+    motion_state = False  # Tracks the current motion state
+    beam_state = False  # Tracks the current beam state
 
     while True:
         motion_detected = GPIO.input(PIR_pin)  # Motion Sensor
@@ -46,48 +48,57 @@ def detection_loop():
         if motion_detected or beam_broken:
             last_event_time = time.time()
 
-        # Publish messages immediately for motion detection and beam break
-        if motion_detected:
-            print("Motion detected!")
-            pubnub.publish().channel(app_channel).message({
-                "event": "motion_detected",
-                "status": "Detected"
-            }).sync()
-        else:
-            print("No motion detected.")
-            pubnub.publish().channel(app_channel).message({
-                "event": "motion_detected",
-                "status": "Not detected"
-            }).sync()
+        # Publish motion status only when the state changes
+        if motion_detected != motion_state:
+            motion_state = motion_detected
+            if motion_state:
+                print("Motion detected!")
+                pubnub.publish().channel(app_channel).message({
+                    "event": "motion_detected",
+                    "status": "Detected"
+                }).sync()
+            else:
+                print("No motion detected.")
+                pubnub.publish().channel(app_channel).message({
+                    "event": "motion_detected",
+                    "status": "Not detected"
+                }).sync()
 
-        if beam_broken:
-            print("Beam broken!")
-            pubnub.publish().channel(app_channel).message({
-                "event": "beam_broken",
-                "status": "Broken"
-            }).sync()
-        else:
-            print("Beam not broken.")
-            pubnub.publish().channel(app_channel).message({
-                "event": "beam_broken",
-                "status": "Not broken"
-            }).sync()
+        # Publish beam status only when the state changes
+        if beam_broken != beam_state:
+            beam_state = beam_broken
+            if beam_state:
+                print("Beam broken!")
+                pubnub.publish().channel(app_channel).message({
+                    "event": "beam_broken",
+                    "status": "Broken"
+                }).sync()
+            else:
+                print("Beam not broken.")
+                pubnub.publish().channel(app_channel).message({
+                    "event": "beam_broken",
+                    "status": "Not broken"
+                }).sync()
 
         # Determine if the light should stay on
         time_since_last_event = time.time() - last_event_time
-        light_should_be_on = (time_since_last_event <= light_on_duration) or manual_light_on
+        light_should_be_on = (
+            (time_since_last_event <= light_on_duration) or manual_light_on or beam_broken
+        )
 
         # Determine the current light status
         current_light_status = "On" if light_should_be_on else "Off"
 
-        # Always publish the current light status
+        # Update the light based on the current status
         GPIO.output(LED_pin, current_light_status == "On")
         print(f"Light status: {current_light_status}")
 
         # Publish the light status to PubNub
-        pubnub.publish().channel(app_channel).message({
-            "light_status": current_light_status
-        }).sync()
+        if current_light_status != last_light_status:
+            last_light_status = current_light_status
+            pubnub.publish().channel(app_channel).message({
+                "light_status": current_light_status
+            }).sync()
 
         time.sleep(0.5)
 
