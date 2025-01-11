@@ -6,7 +6,7 @@
 <section class="about-section">
     <h1>About SmartLightSystem</h1>
     <p>
-        Welcome to SmartLightSystem! This application automates lighting controls using sensors and allows manual overrides via a web interface. 
+        Welcome to SmartLightSystem! This application automates lighting controls using sensors and allows to motior live-data via a web interface.
         It integrates features such as motion detection, beam-breaking sensors, and manual light toggles.
     </p>
 
@@ -17,16 +17,41 @@
         <li>Real-time event tracking and logging</li>
     </ul>
 
-    <h2>Screenshots</h2>
+    <hr><br>
+    
     <div class="screenshots">
         <div class="screenshot">
             <img src="{{ url_for('static', filename='images/login.png') }}" alt="Login">
-            <p>Easy login using Gmail</p>
+            <div>
+                <h3>Easy Login</h3>
+                <p>Click the "Sign in with Google" for quick and easy access to the site</p>
+            </div>
         </div>
+        <hr><br>
         <div class="screenshot">
-            <img src="{{ url_for('static', filename='images/manual_control.png') }}" alt="Manual Control Screenshot">
-            <p>Manual light control interface.</p>
+            <img src="{{ url_for('static', filename='images/home.png') }}" alt="Manual Control Screenshot">
+            <div>
+                <h3>Live Data at a Glance</h3>
+                <p>The dashboard gives you a real-time view of the current status of your smart home lighting system.
+                    You
+                    can quickly see:
+                <ul>
+                    <li>Whether motion has been detected in the monitored area</li>
+                    <li>If the IR break beam sensor is detecting any activity</li>
+                    <li>The current on/off state of the connected light</li>
+                </ul>
+                </p>
+            </div>
         </div>
+        <hr><br>
+        <div class="screenshot">
+            <img src="{{ url_for('static', filename='images/events.png') }}" alt="Manual Control Screenshot">
+            <div>
+                <h3>View Past Data</h3>
+                <p>View a comprehensive history of all the events recorded by the system</p>
+            </div>
+        </div>
+        <hr><br>
     </div>
 </section>
 {% endblock %}

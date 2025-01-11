@@ -10,7 +10,7 @@ body {
     color: #333;
     display: flex;
     flex-direction: column;
-    height: 100vh; 
+    height: 100vh;
 }
 
 header {
@@ -61,7 +61,7 @@ footer {
     padding: 10px 0;
     text-align: center;
     font-size: 12px;
-    margin-top: auto; 
+    margin-top: auto;
 }
 
 
@@ -86,8 +86,8 @@ footer {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    background-color: #fff; 
-    color: #000; 
+    background-color: #fff;
+    color: #000;
     padding: 12px 24px;
     font-size: 16px;
     font-weight: 500;
@@ -102,7 +102,7 @@ footer {
 }
 
 .login-btn:hover {
-    background-color: #f8f8f8; 
+    background-color: #f8f8f8;
     border-color: #ddd;
 }
 
@@ -136,13 +136,13 @@ footer {
     margin: 0 auto;
     display: flex;
     flex-direction: column;
-    gap: 20px; 
+    gap: 20px;
 }
 
 /* Welcome Section */
 .welcome-section {
     text-align: center;
-    margin-bottom: 10px; 
+    margin-bottom: 10px;
 }
 
 .welcome-section h2 {
@@ -187,22 +187,24 @@ footer {
 }
 
 .status-item .status.off {
-    background-color: #A71D31; /* Red */
+    background-color: #A71D31;
+    /* Red */
     color: white;
 }
 
 .status-item .status.on {
-    background-color: #23CE6B; /* Green */
+    background-color: #23CE6B;
+    /* Green */
     color: white;
 }
 
 
 .status-item .status.off:hover {
-    background-color: #9B1A2E; 
+    background-color: #9B1A2E;
 }
 
 .status-item .status.on:hover {
-    background-color: #20B85E; 
+    background-color: #20B85E;
 }
 
 /* Not Authorized Page */
@@ -217,7 +219,8 @@ footer {
 }
 
 .not-authorized-container h1 {
-    color: #A71D31; /* Red */
+    color: #A71D31;
+    /* Red */
     font-size: 3rem;
     margin-bottom: 20px;
 }
@@ -230,7 +233,8 @@ footer {
 
 .not-authorized-container a {
     padding: 12px 24px;
-    background-color: #171D1C; /* Green */
+    background-color: #171D1C;
+    /* Green */
     color: white;
     font-size: 1rem;
     font-weight: bold;
@@ -240,7 +244,8 @@ footer {
 }
 
 .not-authorized-container a:hover {
-    background-color: #A71D31; /* Red */
+    background-color: #A71D31;
+    /* Red */
 }
 
 /* Table */
@@ -305,6 +310,40 @@ h2.text-center {
     font-weight: bold;
     color: #333;
 }
+
+/* About Page */
+
+.about-section{
+    margin: 0 10%;
+}
+
+.screenshots {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+}
+
+.screenshot {
+    display: flex;
+    align-items: center;
+    gap: 3rem;
+    justify-content: space-around;
+}
+
+.screenshot:nth-child(odd) {
+    flex-direction: row-reverse;
+}
+
+.screenshot img {
+    width: 550px;
+    height: auto;
+    border-radius: 8px;
+}
+
+.screenshot .text {
+    max-width: 600px;
+}
+
 
 
 /* Small screen responsiveness */
