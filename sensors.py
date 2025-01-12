@@ -19,7 +19,7 @@ config = PNConfiguration()
 config.subscribe_key = os.getenv("PUBNUB_SUBSCRIBE_KEY")
 config.publish_key = os.getenv("PUBNUB_PUBLISH_KEY")
 config.secret_key = os.getenv("PUBNUB_SECRET_KEY")
-config.user_id = "raspberry_pi"
+config.user_id = os.getenv("PUBNUB_USER_ID")
 
 pubnub = PubNub(config)
 

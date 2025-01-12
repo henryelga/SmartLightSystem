@@ -4,17 +4,14 @@ const TOKEN_TTL_SECONDS = 5 * 60;
 let tokenRefreshTimer = null;
 
 const pubnub = new PubNub({
-    publishKey: 'pub-c-39055472-ec0b-487f-b2a4-89bfe382a3d2',
-    subscribeKey: 'sub-c-efff5b33-2da3-4a60-b6b2-e418b270bb86',
+    publishKey: 'yourPublishKey',
+    subscribeKey: 'yourSubscribeKey',
     uuid: window.userUUID,
-    // uuid: "raspberry_pi",
     authKey: window.token,
 });
 
-console.log("AuthKey being used:", window.token);
 
-
-const CHANNEL_NAME = "elgas_pi_channel"; 
+const CHANNEL_NAME = "yourChannel"; 
 
 let currentLightStatus = "Off";
 

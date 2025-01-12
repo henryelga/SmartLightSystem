@@ -15,7 +15,7 @@ db = my_db.db
 app = Flask(__name__)
 
 # app Configuration
-app.secret_key = "secretKey"
+app.secret_key = os.getenv('APP_SECRET_KEY')
 os.environ["OAUTHLIB_INSECURE_TRANSPORT"] = "1"
 
 # checking for default or no password
@@ -45,8 +45,8 @@ check_database_credentials(app.config["SQLALCHEMY_DATABASE_URI"])
 
 db.init_app(app)
 
-GOOGLE_CLIENT_ID = "369450398481-b8c4p4lv4h5v823tt0aq6i9m7fd2999q.apps.googleusercontent.com"
-GOOGLE_CLIENT_SECRET = "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"
+GOOGLE_CLIENT_ID = os.getenv('GOOGLE_CLIENT_ID')
+GOOGLE_CLIENT_SECRET = os.getenv('GOOGLE_CLIENT_SECRET')
 
 if os.getenv("OAUTHLIB_INSECURE_TRANSPORT") == "1":
     os.environ["OAUTHLIB_INSECURE_TRANSPORT"] = "1"

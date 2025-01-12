@@ -4,7 +4,7 @@ from pubnub.models.consumer.access_manager import PNAccessManagerAuditResult
 from pubnub.models.consumer.v3.channel import Channel
 from pubnub.models.consumer.v3.group import Group
 from pubnub.models.consumer.v3.uuid import UUID
-import time
+import time, os
 
 # PubNub configuration
 def initialize_pubnub(uuid):
@@ -12,10 +12,10 @@ def initialize_pubnub(uuid):
         raise ValueError("UUID cannot be empty or None.")
     
     pnconfig = PNConfiguration()
-    pnconfig.subscribe_key = "sub-c-efff5b33-2da3-4a60-b6b2-e418b270bb86"
-    pnconfig.publish_key = "pub-c-39055472-ec0b-487f-b2a4-89bfe382a3d2"
-    pnconfig.secret_key = "sec-c-YTYyZmQ3YTItYzc1ZS00NjMwLTlkNGQtOTFmODM1ZTYyNzBk"
-    pnconfig.uuid = "raspberry_pi"
+    pnconfig.subscribe_key = os.getenv("PUBNUB_SUBSCRIBE_KEY")
+    pnconfig.publish_key = os.getenv("PUBNUB_PUBLISH_KEY")
+    pnconfig.secret_key = os.getenv("PUBNUB_SECRET_KEY")
+    pnconfig.uuid = os.getenv("PUBNUB_USER_ID")
     return PubNub(pnconfig)
 
     
